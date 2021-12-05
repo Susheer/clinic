@@ -4,7 +4,7 @@
 
 It is an app that let you automate entire process to handle patients health history for any small scale clinic.
 
-## React Native Boilerplate
+## Clinic
 
 consist of:
 
