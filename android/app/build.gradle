@@ -126,7 +126,7 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
-        applicationId "com.reactnativeboilerplate"
+        applicationId "com.weblake.clinic.in"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -142,10 +142,10 @@ android {
     }
     signingConfigs {
         debug {
-            storeFile file('debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
+            storeFile file('')
+            storePassword ''
+            keyAlias ''
+            keyPassword ''
         }
     }
     buildTypes {

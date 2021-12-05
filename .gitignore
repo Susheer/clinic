@@ -61,3 +61,4 @@ buck-out/
 # secure info
 /android/gradle.properties
 /android/app/my-upload-key.keystore
+/checklist
