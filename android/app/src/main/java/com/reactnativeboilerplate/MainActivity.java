@@ -1,4 +1,4 @@
-package com.reactnativeboilerplate;
+package com.weblake.clinic.in;
 import android.os.Bundle;
 
 import com.facebook.react.ReactActivity;
