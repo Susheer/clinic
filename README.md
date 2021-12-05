@@ -1,8 +1,8 @@
-# react-native-boilerplate
+# Clinic
 
-## What is React Native Boilerplate
+## What is Clinic
 
-It is a template that you can clone and reuse for every project. It is starting point for React Native application.
+It is an app that let you automate entire process to handle patients health history for any small scale clinic.
 
 ## React Native Boilerplate
 
