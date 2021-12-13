@@ -1,21 +1,26 @@
 import { getUser } from '../../api/fakeApiUser'
+import {
+  FETCH_USER_SUCCESS,
+  FETCH_USER_FAILED,
+  FETCH_USER_REQUEST
+} from '../constants/user.constants'
 
 export const fetchUserRequest = () => {
   return {
-    type: 'FETCH_USER_REQUEST'
+    type: FETCH_USER_REQUEST
   }
 }
 
 export const fetchUserSuccess = users => {
   return {
-    type: 'FETCH_USER_SUCCESS',
+    type: FETCH_USER_SUCCESS,
     payload: users
   }
 }
 
 export const fetchUserFail = () => {
   return {
-    type: 'FETCH_USER_FAILED'
+    type: FETCH_USER_FAILED
   }
 }
 

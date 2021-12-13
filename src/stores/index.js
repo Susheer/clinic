@@ -1,22 +1,29 @@
-import {createStore, compose, applyMiddleware} from 'redux';
-import thunk from 'redux-thunk';
-import {persistStore, persistReducer} from 'redux-persist';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import reducers from './reducers';
+import { createStore, compose, applyMiddleware } from 'redux'
+import thunk from 'redux-thunk'
+import { persistStore, persistReducer } from 'redux-persist'
+import { composeWithDevTools } from 'remote-redux-devtools'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import reducers from './reducers'
 
-const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+let composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
+
+const composeEnhancers = composeWithDevTools({
+  realtime: true,
+  port: 8000,
+  hostname: '192.168.43.94'
+})
 
 export const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: [],
-};
+  whitelist: []
+}
 
-const persistedReducer = persistReducer(persistConfig, reducers);
+const persistedReducer = persistReducer(persistConfig, reducers)
 
 export const store = createStore(
   persistedReducer,
-  composeEnhancer(applyMiddleware(thunk)),
-);
+  composeEnhancer(applyMiddleware(thunk), composeEnhancers())
+)
 
-export const persistore = persistStore(store);
+export const persistore = persistStore(store)
