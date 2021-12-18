@@ -10,6 +10,7 @@ import {
   FlatList,
   Modal
 } from 'react-native'
+
 import styles from './Home.style'
 import Icon from 'react-native-vector-icons/Ionicons'
 //import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -27,30 +28,13 @@ const Home = ({ navigation, user }) => {
   const addPatient = useSelector(
     state => state.userformReducer.addNewPatientClicked
   )
+  const users = useSelector(state => state.userReducer.users)
   const [filterVisible, setFilterVisible] = useState(false)
   const ToggleFilterVisible = () => {
     setFilterVisible(!filterVisible)
   }
   const onPressView = () => {
     navigation.navigate('Profile', {})
-  }
-  function ListUser() {
-    return user.map(data => {
-      return (
-        <View
-          key={data.id}
-          style={{
-            borderBottomWidth: 1,
-            borderColor: '#eee',
-            padding: 1,
-            marginTop: 10
-          }}>
-          <Text style={{ fontSize: 15 }}>
-            {data.id}. {data.name}
-          </Text>
-        </View>
-      )
-    })
   }
   function SearchBar(params) {
     return (
@@ -84,51 +68,39 @@ const Home = ({ navigation, user }) => {
       <SafeAreaView
         style={styles.container}
         showsVerticalScrollIndicator={false}>
-        <View
-          style={[
-            styles.popularContainer,
-            { marginRight: 20, marginLeft: 20, marginBottom: 70 }
-          ]}>
-          <FlatList
-            data={company.companies}
-            keyExtractor={item => item.id}
-            renderItem={({ item }) => {
-              return <Pateint pateint={item} viewPatient={onPressView} />
-            }}
-          />
-        </View>
+        <FlatList
+          data={users}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => {
+            return <Pateint pateint={item} viewPatient={onPressView} />
+          }}
+        />
       </SafeAreaView>
     )
   }
 
   return (
     <>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor={theme.colors.lightWhite}
-      />
-      <SafeAreaView style={styles.SafeAreaView1}>
-        <Header />
-        <SearchBar />
-        <View style={[styles.popularContainer, { marginLeft: 20 }]}>
-          <Text style={styles.popularText}>Quick result</Text>
-        </View>
-        <UserList />
-        <Modal
-          animationType="slide"
-          visible={filterVisible}
-          onRequestClose={() => ToggleFilterVisible()}>
-          <FilterModal closeModal={() => ToggleFilterVisible()} />
-        </Modal>
-        <Modal
-          animationType="fade"
-          visible={addPatient}
-          onRequestClose={() =>
-            dispatch(setAddPatientButtonClicked(!addPatient))
-          }>
-          <AddPatientForm />
-        </Modal>
-      </SafeAreaView>
+      <Header />
+      <SearchBar />
+      <View style={[styles.popularContainer, { marginLeft: 20 }]}>
+        <Text style={styles.popularText}>Quick result</Text>
+      </View>
+      <UserList />
+      <Modal
+        animationType="slide"
+        visible={filterVisible}
+        onRequestClose={() => ToggleFilterVisible()}>
+        <FilterModal closeModal={() => ToggleFilterVisible()} />
+      </Modal>
+      <Modal
+        animationType="fade"
+        visible={addPatient}
+        onRequestClose={() =>
+          dispatch(setAddPatientButtonClicked(!addPatient))
+        }>
+        <AddPatientForm />
+      </Modal>
     </>
   )
 }
