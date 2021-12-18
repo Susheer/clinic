@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { View, ScrollView } from 'react-native'
+import { VStack, Text } from 'native-base'
 import { useDispatch, useSelector } from 'react-redux'
 import { Picker } from '@react-native-community/picker'
 import { styles } from './form.style'
@@ -20,6 +21,9 @@ export function Body(params) {
   const name = useSelector(state => state.userformReducer.name)
   const guardianName = useSelector(state => state.userformReducer.guardianName)
   const healthId = useSelector(state => state.userformReducer.healthId)
+  const error_description = useSelector(
+    state => state.userformReducer.error_description
+  )
   const mobileNumber = useSelector(state => state.userformReducer.mobileNumber)
   const address = useSelector(state => state.userformReducer.address)
   return (
@@ -76,6 +80,11 @@ export function Body(params) {
           onChangeText={text => dispatch(setAddress(text))}
           placeholder="Address"
         />
+        <VStack space={1} alignItems="center" mt={3}>
+          <Text fontSize="md" color={'red.500'}>
+            {error_description}
+          </Text>
+        </VStack>
       </View>
     </ScrollView>
   )

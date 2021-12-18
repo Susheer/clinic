@@ -32,3 +32,9 @@ export function setAddress(data) {
 export function setAddPatientButtonClicked(boolean) {
   return { type: ACTION_TYPE.ADD_PATIENT_BUTTON_CLICKED, payload: boolean }
 }
+export function canNotLeftEmpty(error_description) {
+  return {
+    type: ACTION_TYPE.PATIENT_FORM_EMPTY,
+    payload: error_description
+  }
+}

@@ -7,7 +7,8 @@ const initialState = {
   mobileNumber: '',
   sex: 'Sex',
   address: '',
-  guardianName: ''
+  guardianName: '',
+  error_description: ''
 }
 
 export const newPatientfrom = (state = initialState, action) => {
@@ -26,42 +27,54 @@ export const newPatientfrom = (state = initialState, action) => {
         mobileNumber: '',
         sex: 'Sex',
         address: '',
-        guardianName: ''
+        guardianName: '',
+        error_description: ''
       }
     case ACTION_TYPE.SET_NAME:
       return {
         ...state,
-        name: payload
+        name: payload,
+        error_description: ''
       }
     case ACTION_TYPE.SET_SEX:
       return {
         ...state,
-        sex: payload
+        sex: payload,
+        error_description: ''
       }
     case ACTION_TYPE.SET_ADDRESS:
       return {
         ...state,
-        address: payload
+        address: payload,
+        error_description: ''
       }
     case ACTION_TYPE.SET_GAURDIAN:
       return {
         ...state,
-        guardianName: payload
+        guardianName: payload,
+        error_description: ''
       }
     case ACTION_TYPE.SET_HEALTH_ID:
       return {
         ...state,
-        healthId: payload
+        healthId: payload,
+        error_description: ''
       }
     case ACTION_TYPE.SET_MOBILE_NUMBER:
       return {
         ...state,
-        mobileNumber: payload
+        mobileNumber: payload,
+        error_description: ''
       }
     case ACTION_TYPE.ADD_PATIENT_BUTTON_CLICKED:
       return {
         ...state,
         addNewPatientClicked: payload
+      }
+    case ACTION_TYPE.PATIENT_FORM_EMPTY:
+      return {
+        ...state,
+        error_description: payload
       }
     default:
       return state
