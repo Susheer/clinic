@@ -14,6 +14,7 @@ import {
 import styles from './Home.style'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { connect, useDispatch, useSelector } from 'react-redux'
+import { Box, VStack, HStack } from 'native-base'
 import * as theme from '../../constants/theme'
 import Pateint from '../../components/pateint'
 import FilterModal from '../../components/filterPatient'
@@ -50,14 +51,18 @@ const Home = ({ navigation, user }) => {
   }
   function Header(params) {
     return (
-      <View style={[styles.addPatientContainer]}>
+      <HStack space={150}>
         <Text style={styles.h4}>Search</Text>
-        <TouchableOpacity
-          style={styles.addPatientIconContainer}
-          onPress={() => dispatch(setAddPatientButtonClicked(!addPatient))}>
-          <Text style={{ color: 'white', fontSize: 12 }}>Add Patient</Text>
-        </TouchableOpacity>
-      </View>
+        <View
+          space={1}
+          style={{ display: 'flex', justifyContent: 'flex-end', width: 100 }}>
+          <TouchableOpacity
+            style={styles.addPatientIconContainer}
+            onPress={() => dispatch(setAddPatientButtonClicked(!addPatient))}>
+            <Text style={{ color: 'white', fontSize: 12 }}>Add Patient</Text>
+          </TouchableOpacity>
+        </View>
+      </HStack>
     )
   }
   function UserList(params) {

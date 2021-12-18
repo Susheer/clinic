@@ -4,7 +4,7 @@ import styles from './text.style'
 export function CTextinput(props) {
   return (
     <View style={styles.inputText}>
-      <TextInput {...props} />
+      <TextInput {...props} style={{ ...props.style, color: 'black' }} />
     </View>
   )
 }
