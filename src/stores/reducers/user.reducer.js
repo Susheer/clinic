@@ -1,7 +1,9 @@
+import { Avatar } from 'react-native-elements'
 import {
   FETCH_USER_REQUEST,
   FETCH_USER_FAILED,
-  FETCH_USER_SUCCESS
+  FETCH_USER_SUCCESS,
+  ADD_NEW_PATIENT
 } from '../constants/user.constants'
 
 const initialState = {
@@ -28,6 +30,11 @@ export const userReducer = (state = initialState, action) => {
       return {
         ...state,
         isLoading: false
+      }
+    case ADD_NEW_PATIENT:
+      return {
+        ...state,
+        users: [...state.users, payload]
       }
 
     default:

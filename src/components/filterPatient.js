@@ -10,7 +10,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import * as theme from '../constants/theme'
 import { Picker } from '@react-native-community/picker'
 
-const FilterModal = props => {
+const AddPatientForm = props => {
   const [category, setCategory] = useState('UX/UI Design')
   const [distance, setDistance] = useState(0)
 
@@ -169,4 +169,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default FilterModal
+export default AddPatientForm

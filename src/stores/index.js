@@ -10,7 +10,7 @@ let composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 const composeEnhancers = composeWithDevTools({
   realtime: true,
   port: 8000,
-  hostname: '192.168.43.94'
+  hostname: '192.168.29.94'
 })
 
 export const persistConfig = {

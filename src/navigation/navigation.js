@@ -3,6 +3,7 @@ import Home from '../screens/Home/Home.screen'
 import Profile from '../screens/Profile/Profile.screen'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
+
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import Icon from 'react-native-vector-icons/Ionicons'
 
@@ -50,7 +51,6 @@ const MainNavigation = () => {
           options={{ headerShown: false }}
           component={Profile}
         />
-        {/* add your another screen here using -> Stack.Screen */}
       </Stack.Navigator>
     </NavigationContainer>
   )
