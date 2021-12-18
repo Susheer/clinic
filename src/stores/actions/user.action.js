@@ -2,7 +2,8 @@ import { getUser } from '../../api/fakeApiUser'
 import {
   FETCH_USER_SUCCESS,
   FETCH_USER_FAILED,
-  FETCH_USER_REQUEST
+  FETCH_USER_REQUEST,
+  ADD_NEW_PATIENT
 } from '../constants/user.constants'
 
 export const fetchUserRequest = () => {
@@ -32,4 +33,8 @@ export const fetchDataUser = () => async dispatch => {
   } catch (error) {
     dispatch(fetchUserFail())
   }
+}
+
+export const addNewPatientList = patient => {
+  return { type: ADD_NEW_PATIENT, payload: patient }
 }

@@ -15,11 +15,11 @@ const Patient = ({ pateint, viewPatient }) => {
         <Avatar bg="gray.400">{firstChOfEachWord(pateint.name)}</Avatar>
         <View style={styles.textContainer}>
           <Text style={styles.name}>{pateint.name}</Text>
-          <Text style={styles.parentsNm}>{pateint.prents}</Text>
+          <Text style={styles.parentsNm}>{pateint.guardianName}</Text>
         </View>
         <View style={styles.textContainer}>
-          <Text style={styles.parentsNm}>{pateint.mobile}</Text>
-          <Text style={styles.parentsNm}>{pateint.gender}</Text>
+          <Text style={styles.parentsNm}>{pateint.mobileNumber}</Text>
+          <Text style={styles.parentsNm}>{pateint.sex}</Text>
         </View>
       </View>
     </TouchableOpacity>

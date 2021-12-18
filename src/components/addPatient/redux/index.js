@@ -41,7 +41,7 @@ export const newPatientfrom = (state = initialState, action) => {
     case ACTION_TYPE.SET_ADDRESS:
       return {
         ...state,
-        gender: payload
+        address: payload
       }
     case ACTION_TYPE.SET_GAURDIAN:
       return {
