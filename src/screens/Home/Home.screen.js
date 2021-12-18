@@ -13,11 +13,8 @@ import {
 
 import styles from './Home.style'
 import Icon from 'react-native-vector-icons/Ionicons'
-//import Icon from 'react-native-vector-icons/MaterialIcons'
 import { connect, useDispatch, useSelector } from 'react-redux'
-import { fetchDataUser } from '../../stores/actions/user.action'
 import * as theme from '../../constants/theme'
-import * as company from '../../constants/patient'
 import Pateint from '../../components/pateint'
 import FilterModal from '../../components/filterPatient'
 import AddPatientForm from '../../components/addPatient'
@@ -70,9 +67,10 @@ const Home = ({ navigation, user }) => {
         showsVerticalScrollIndicator={false}>
         <FlatList
           data={users}
-          keyExtractor={item => item.id}
-          renderItem={({ item }) => {
-            return <Pateint pateint={item} viewPatient={onPressView} />
+          renderItem={({ item, index }) => {
+            return (
+              <Pateint key={index} pateint={item} viewPatient={onPressView} />
+            )
           }}
         />
       </SafeAreaView>
