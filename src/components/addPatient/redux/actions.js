@@ -28,3 +28,7 @@ export function setMobileNumber(data) {
 export function setAddress(data) {
   return { type: ACTION_TYPE.SET_ADDRESS, payload: data }
 }
+
+export function setAddPatientButtonClicked(boolean) {
+  return { type: ACTION_TYPE.ADD_PATIENT_BUTTON_CLICKED, payload: boolean }
+}

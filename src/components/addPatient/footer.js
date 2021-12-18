@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity } from 'react-native'
 import { useDispatch } from 'react-redux'
 import { styles } from './form.style'
 import * as theme from '../../constants/theme'
-import { submitForm } from './redux/actions'
+import { submitForm, setAddPatientButtonClicked } from './redux/actions'
 export function Footer(props) {
   const dispatch = useDispatch()
   return (
@@ -12,6 +12,7 @@ export function Footer(props) {
         style={styles.btnContainer}
         onPress={() => {
           dispatch(submitForm())
+          dispatch(setAddPatientButtonClicked(false))
         }}>
         <Text style={styles.btnText}>Submit</Text>
       </TouchableOpacity>

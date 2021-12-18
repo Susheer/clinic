@@ -1,6 +1,6 @@
 import { ACTION_TYPE } from './actionType'
 const initialState = {
-  wipeFlag: false,
+  addNewPatientClicked: false,
   isSubmitClicked: false,
   name: '',
   healthId: '',
@@ -57,6 +57,11 @@ export const newPatientfrom = (state = initialState, action) => {
       return {
         ...state,
         mobileNumber: payload
+      }
+    case ACTION_TYPE.ADD_PATIENT_BUTTON_CLICKED:
+      return {
+        ...state,
+        addNewPatientClicked: payload
       }
     default:
       return state

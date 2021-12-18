@@ -13,23 +13,23 @@ import {
 import styles from './Home.style'
 import Icon from 'react-native-vector-icons/Ionicons'
 //import Icon from 'react-native-vector-icons/MaterialIcons'
-import { connect, useDispatch } from 'react-redux'
+import { connect, useDispatch, useSelector } from 'react-redux'
 import { fetchDataUser } from '../../stores/actions/user.action'
 import * as theme from '../../constants/theme'
 import * as company from '../../constants/patient'
 import Pateint from '../../components/pateint'
 import FilterModal from '../../components/filterPatient'
 import AddPatientForm from '../../components/addPatient'
+import { setAddPatientButtonClicked } from '../../components/addPatient/redux/actions'
 
 const Home = ({ navigation, user }) => {
   const dispatch = useDispatch()
+  const addPatient = useSelector(
+    state => state.userformReducer.addNewPatientClicked
+  )
   const [filterVisible, setFilterVisible] = useState(false)
-  const [addPatient, setAddPatient] = useState(false)
   const ToggleFilterVisible = () => {
     setFilterVisible(!filterVisible)
-  }
-  const ToggleAddPatient = () => {
-    setAddPatient(!addPatient)
   }
   const onPressView = () => {
     navigation.navigate('Profile', {})
@@ -71,10 +71,9 @@ const Home = ({ navigation, user }) => {
     return (
       <View style={[styles.addPatientContainer]}>
         <Text style={styles.h4}>Search</Text>
-        {/* Add patient */}
         <TouchableOpacity
           style={styles.addPatientIconContainer}
-          onPress={() => ToggleAddPatient()}>
+          onPress={() => dispatch(setAddPatientButtonClicked(!addPatient))}>
           <Text style={{ color: 'white', fontSize: 12 }}>Add Patient</Text>
         </TouchableOpacity>
       </View>
@@ -124,8 +123,10 @@ const Home = ({ navigation, user }) => {
         <Modal
           animationType="fade"
           visible={addPatient}
-          onRequestClose={() => ToggleAddPatient()}>
-          <AddPatientForm closeModal={() => ToggleAddPatient()} />
+          onRequestClose={() =>
+            dispatch(setAddPatientButtonClicked(!addPatient))
+          }>
+          <AddPatientForm />
         </Modal>
       </SafeAreaView>
     </>
