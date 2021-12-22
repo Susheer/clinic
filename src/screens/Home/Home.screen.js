@@ -1,12 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   SafeAreaView,
   View,
   Text,
-  StatusBar,
   TouchableOpacity,
   TextInput,
-  ScrollView,
   FlatList,
   Modal
 } from 'react-native'
@@ -14,7 +12,7 @@ import {
 import styles from './Home.style'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { connect, useDispatch, useSelector } from 'react-redux'
-import { Box, VStack, HStack } from 'native-base'
+import { Box, VStack, HStack, ScrollView } from 'native-base'
 import * as theme from '../../constants/theme'
 import Pateint from '../../components/pateint'
 import FilterModal from '../../components/filterPatient'
@@ -22,6 +20,7 @@ import AddPatientForm from '../../components/addPatient'
 import { setAddPatientButtonClicked } from '../../components/addPatient/redux/actions'
 
 const Home = ({ navigation, user }) => {
+  const [searchTerm, setSearchTerm] = useState('')
   const dispatch = useDispatch()
   const addPatient = useSelector(
     state => state.userformReducer.addNewPatientClicked
@@ -34,21 +33,7 @@ const Home = ({ navigation, user }) => {
   const onPressView = () => {
     navigation.navigate('Profile', {})
   }
-  function SearchBar(params) {
-    return (
-      <View style={styles.searchContainer}>
-        <View style={styles.searchInputContainer}>
-          <Icon name="search" size={30} color={theme.colors.silver} />
-          <TextInput placeholder="Enter patient name" />
-        </View>
-        <TouchableOpacity
-          style={styles.searchIconContainer}
-          onPress={() => ToggleFilterVisible()}>
-          <Icon name="filter" size={30} color={theme.colors.white} />
-        </TouchableOpacity>
-      </View>
-    )
-  }
+
   function Header(params) {
     return (
       <HStack space={150}>
@@ -65,31 +50,19 @@ const Home = ({ navigation, user }) => {
       </HStack>
     )
   }
-  function UserList(params) {
-    return (
-      <SafeAreaView
-        style={styles.container}
-        showsVerticalScrollIndicator={false}>
-        <FlatList
-          data={users}
-          renderItem={({ item, index }) => {
-            return (
-              <Pateint key={index} pateint={item} viewPatient={onPressView} />
-            )
-          }}
-        />
-      </SafeAreaView>
-    )
-  }
 
   return (
     <>
       <Header />
-      <SearchBar />
+      <SearchBar term={searchTerm} setTerm={setSearchTerm} />
       <View style={[styles.popularContainer, { marginLeft: 20 }]}>
         <Text style={styles.popularText}>Quick result</Text>
       </View>
-      <UserList />
+      <UserList
+        searchTerm={searchTerm}
+        onPressView={onPressView}
+        users={users}
+      />
       <Modal
         animationType="slide"
         visible={filterVisible}
@@ -115,3 +88,47 @@ const mapStateToProps = state => {
 }
 
 export default connect(mapStateToProps, null)(Home)
+
+function SearchBar(props) {
+  const { term, setTerm } = props
+  return (
+    <View style={styles.searchContainer}>
+      <View style={styles.searchInputContainer}>
+        <Icon name="search" size={30} color={theme.colors.silver} />
+        <TextInput
+          placeholder="Enter patient name"
+          onChangeText={text => setTerm(text)}
+          defaultValue={term}
+        />
+      </View>
+      <TouchableOpacity
+        style={styles.searchIconContainer}
+        onPress={() => ToggleFilterVisible()}>
+        <Icon name="filter" size={30} color={theme.colors.white} />
+      </TouchableOpacity>
+    </View>
+  )
+}
+
+function UserList(props) {
+  const { users, searchTerm, onPressView } = props
+  let data = []
+  if (searchTerm && searchTerm !== '') {
+    // apply filter on search term
+    data = users.filter(item => item.name.toLowerCase().includes(searchTerm))
+  } else {
+    data = users
+  }
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <FlatList
+        data={data}
+        renderItem={({ item, index }) => {
+          return (
+            <Pateint key={index} pateint={item} viewPatient={onPressView} />
+          )
+        }}
+      />
+    </SafeAreaView>
+  )
+}
