@@ -8,7 +8,8 @@ const initialState = {
   sex: 'Sex',
   address: '',
   guardianName: '',
-  error_description: ''
+  error_description: '',
+  refPatientList: false
 }
 
 export const newPatientfrom = (state = initialState, action) => {
@@ -71,6 +72,8 @@ export const newPatientfrom = (state = initialState, action) => {
         ...state,
         addNewPatientClicked: payload
       }
+    case ACTION_TYPE.REF_PATIENT_LIST:
+      return { ...state, refPatientList: !state.refPatientList }
     case ACTION_TYPE.PATIENT_FORM_EMPTY:
       return {
         ...state,

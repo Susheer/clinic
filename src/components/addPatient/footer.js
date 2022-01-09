@@ -8,15 +8,18 @@ import {
   submitForm,
   setAddPatientButtonClicked,
   clearFrom,
-  canNotLeftEmpty
+  canNotLeftEmpty,
+  setrefPatientsList
 } from './redux/actions'
 import { addNewPatientList } from '../../stores/actions/user.action'
+import { useDatabase } from '../../context/DatabaseContext'
+
 export function Footer(props) {
   const toast = useToast()
   const dispatch = useDispatch()
+  const ctx = useDatabase()
   const { name, healthId, mobileNumber, sex, address, guardianName } =
     useSelector(state => state.userformReducer)
-
   return (
     <View style={{ padding: 20, backgroundColor: theme.colors.white }}>
       <TouchableOpacity
@@ -44,7 +47,25 @@ export function Footer(props) {
           } else if (!guardianName) {
             canNotLeftEmpty("Fill patient's gaurdian's name.")
           } else {
-            dispatch(addNewPatientList(data))
+            setImmediate(() => dispatch(addNewPatientList(data)))
+            ctx
+              .addPatient(
+                name,
+                healthId,
+                mobileNumber,
+                sex,
+                'hkkk',
+                guardianName
+              )
+              .then(res => {
+                setImmediate(() => dispatch(setrefPatientsList(true)))
+              })
+              .then(res => {
+                console.log('add patient err', res)
+              })
+              .catch(err => {
+                console.log('add patient', err)
+              })
             setImmediate(() => {
               toast.show({
                 title: `Patient ${name} added !! `
