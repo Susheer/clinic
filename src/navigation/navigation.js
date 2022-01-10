@@ -1,8 +1,11 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import Home from '../screens/Home/Home.screen'
 import Profile from '../screens/Profile/Profile.screen'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
+import { fetchUserSuccess } from '../stores/actions/user.action'
+import { sqliteDatabase } from '../database/Database'
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -37,7 +40,20 @@ function MyTabs() {
   )
 }
 
-const MainNavigation = () => {
+const MainNavigation = props => {
+  const dispatch = useDispatch()
+  const { refPatientList } = useSelector(state => state.userformReducer)
+  useEffect(() => {
+    sqliteDatabase
+      .getPatientsList(10, 'DESC')
+      .then(response => {
+        console.log('Apps lists', response)
+        dispatch({ type: 'FETCH_USER_SUCCESS', payload: response })
+      })
+      .catch(error => {
+        console.log('[Apps] Failed in loading patient list from db', error)
+      })
+  }, [refPatientList])
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>

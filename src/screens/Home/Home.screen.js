@@ -18,7 +18,6 @@ import Pateint from '../../components/pateint'
 import FilterModal from '../../components/filterPatient'
 import AddPatientForm from '../../components/addPatient'
 import { setAddPatientButtonClicked } from '../../components/addPatient/redux/actions'
-
 const Home = ({ navigation, user }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const dispatch = useDispatch()
@@ -27,6 +26,7 @@ const Home = ({ navigation, user }) => {
   )
   const users = useSelector(state => state.userReducer.users)
   const [filterVisible, setFilterVisible] = useState(false)
+
   const ToggleFilterVisible = () => {
     setFilterVisible(!filterVisible)
   }

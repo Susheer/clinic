@@ -38,3 +38,10 @@ export function canNotLeftEmpty(error_description) {
     payload: error_description
   }
 }
+
+export function setrefPatientsList(flag) {
+  return {
+    type: ACTION_TYPE.REF_PATIENT_LIST,
+    payload: flag
+  }
+}
