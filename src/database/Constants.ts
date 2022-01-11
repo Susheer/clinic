@@ -1,7 +1,6 @@
 /**
  * Clinic
- * Copyright (c) 2018-2020 Bruce Lefebvre <bruce@brucelefebvre.com>
- * https://github.com/blefebvre/react-native-sqlite-demo/blob/master/LICENSE
+ * Copyright (c) 2021-2025 Sudheer gupta 
  */
 export const DATABASE = {
   FILE_NAME: "AppDatabase.db",
