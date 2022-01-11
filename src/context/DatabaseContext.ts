@@ -1,3 +1,8 @@
+/**
+ * Clinic
+ * Copyright (c) 2021-2025 Sudheer gupta 
+ */
+
 import React,{useContext} from 'react'
 import {Database,sqliteDatabase} from "../database/Database"
 

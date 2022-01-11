@@ -1,7 +1,7 @@
 
 export enum Sex {
-    male,
-    female
+    male="male",
+    female="female"
   }
 export interface Patient{
     p_id:number,

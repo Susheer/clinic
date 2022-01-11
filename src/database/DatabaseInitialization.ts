@@ -1,7 +1,6 @@
 /**
- * React Native SQLite Demo
- * Copyright (c) 2018-2020 Bruce Lefebvre <bruce@brucelefebvre.com>
- * https://github.com/blefebvre/react-native-sqlite-demo/blob/master/LICENSE
+ * Clinic
+ * Copyright (c) 2021-2025 Sudheer gupta 
  */
 import SQLite from "react-native-sqlite-storage";
 
@@ -48,30 +47,9 @@ export class DatabaseInitialization {
     // DANGER! For dev only
     const dropAllTables = false;
     if (dropAllTables) {
-      transaction.executeSql("DROP TABLE IF EXISTS List;");
-      transaction.executeSql("DROP TABLE IF EXISTS ListItem;");
       transaction.executeSql("DROP TABLE IF EXISTS Version;");
       transaction.executeSql("DROP TABLE IF EXISTS Patient;");  
     }
-
-    // List table
-    transaction.executeSql(`
-      CREATE TABLE IF NOT EXISTS List(
-        list_id INTEGER PRIMARY KEY NOT NULL,
-        title TEXT
-      );
-    `);
-
-    // ListItem table
-    transaction.executeSql(`
-      CREATE TABLE IF NOT EXISTS ListItem(
-        item_id INTEGER PRIMARY KEY NOT NULL,
-        list_id INTEGER,
-        text TEXT,
-        done INTEGER DEFAULT 0,
-        FOREIGN KEY ( list_id ) REFERENCES List ( list_id )
-      );
-    `);
 
    // Patient table
         transaction.executeSql(`
