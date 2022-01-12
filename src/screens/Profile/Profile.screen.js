@@ -33,6 +33,11 @@ const allergies = [
     id: '3',
     updatedAt: '12th,Jun 2020',
     name: 'A runny or blocked nose'
+  },
+  {
+    id: '4',
+    updatedAt: '12th,Jun 2020',
+    name: 'A runny or blocked nose'
   }
 ]
 const Edu = [
@@ -80,7 +85,7 @@ const Profile = ({ navigation }) => {
 
           {/* Body */}
 
-          <ScrollView
+          <View
             style={[styles.body, { flexGrow: 1 }]}
             nestedScrollEnabled={true}>
             <View style={styles.titleContainer}>
@@ -141,7 +146,7 @@ const Profile = ({ navigation }) => {
             </View>
             {/* Allergies */}
             <Text style={styles.titleText}>Allergies</Text>
-            <SafeAreaView>
+            <SafeAreaView style={{ flex: 1 }}>
               <FlatList
                 data={allergies}
                 showsHorizontalScrollIndicator={false}
@@ -157,23 +162,22 @@ const Profile = ({ navigation }) => {
               <Text style={[styles.popularText, { marginLeft: 20 }]}>
                 Prescriptions
               </Text>
-              <SafeAreaView>
-                <FlatList
-                  data={company.companies}
-                  horizontal={true}
-                  showsHorizontalScrollIndicator={false}
-                  keyExtractor={item => item.id}
-                  renderItem={({ item }) => {
-                    return (
-                      <TouchableOpacity activeOpacity={1} style={{ flex: 1 }}>
-                        <Company item={item} />
-                      </TouchableOpacity>
-                    )
-                  }}
-                />
-              </SafeAreaView>
+
+              <FlatList
+                data={company.companies}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                keyExtractor={item => item.id}
+                renderItem={({ item }) => {
+                  return (
+                    <TouchableOpacity activeOpacity={1} style={{ flex: 1 }}>
+                      <Company item={item} />
+                    </TouchableOpacity>
+                  )
+                }}
+              />
             </View>
-          </ScrollView>
+          </View>
         </View>
       </SafeAreaView>
     </>
