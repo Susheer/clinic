@@ -17,13 +17,10 @@ import * as theme from '../../constants/theme'
 import Pateint from '../../components/pateint'
 import FilterModal from '../../components/filterPatient'
 import AddPatientForm from '../../components/addPatient'
-import { setAddPatientButtonClicked } from '../../components/addPatient/redux/actions'
 const Home = ({ navigation, user }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const dispatch = useDispatch()
-  const addPatient = useSelector(
-    state => state.userformReducer.addNewPatientClicked
-  )
+  const [addNewPatientFlg, setAddNewPatientFlg] = useState(false)
   const users = useSelector(state => state.userReducer.users)
   const [filterVisible, setFilterVisible] = useState(false)
 
@@ -43,7 +40,7 @@ const Home = ({ navigation, user }) => {
           style={{ display: 'flex', justifyContent: 'flex-end', width: 100 }}>
           <TouchableOpacity
             style={styles.addPatientIconContainer}
-            onPress={() => dispatch(setAddPatientButtonClicked(!addPatient))}>
+            onPress={() => setAddNewPatientFlg(!addNewPatientFlg)}>
             <Text style={{ color: 'white', fontSize: 12 }}>Add Patient</Text>
           </TouchableOpacity>
         </View>
@@ -71,11 +68,11 @@ const Home = ({ navigation, user }) => {
       </Modal>
       <Modal
         animationType="fade"
-        visible={addPatient}
-        onRequestClose={() =>
-          dispatch(setAddPatientButtonClicked(!addPatient))
-        }>
-        <AddPatientForm />
+        visible={addNewPatientFlg}
+        onRequestClose={() => setAddNewPatientFlg(!addNewPatientFlg)}>
+        <AddPatientForm
+          onCloseForm={() => setAddNewPatientFlg(!addNewPatientFlg)}
+        />
       </Modal>
     </>
   )
