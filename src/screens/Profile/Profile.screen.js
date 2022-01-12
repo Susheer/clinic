@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   View,
@@ -7,12 +7,12 @@ import {
   Image,
   Text,
   FlatList,
-  SafeAreaView,
-  ScrollView
+  SafeAreaView
 } from 'react-native'
-import styles from './Profile.style'
 import Icon from 'react-native-vector-icons/Ionicons'
 import FontIcon from 'react-native-vector-icons/Fontisto'
+import styles from './Profile.style'
+import { useDatabase } from '../../context/DatabaseContext'
 import Experience from '../../components/Experience'
 import Company from '../../components/company'
 import * as company from '../../constants/jobs'
@@ -57,8 +57,23 @@ const Edu = [
   }
 ]
 const Profile = ({ navigation }) => {
+  const patientId = useSelector(state => state.userReducer.selectedPatientId)
   const state = useSelector(state => state.userReducer)
-  console.log('Staet profile', state)
+  const [user, setUser] = useState(undefined)
+  const dbCTX = useDatabase()
+  useEffect(() => {
+    if (patientId) {
+      dbCTX
+        .getPatientById(patientId)
+        .then(user => {
+          setUser(user)
+        })
+        .catch(reason => {
+          setUser({})
+          console.log('Error', reason)
+        })
+    }
+  }, [patientId])
   return (
     <>
       <StatusBar barStyle="dark-content" backgroundColor={'#f9f9f9'} />
@@ -94,8 +109,8 @@ const Profile = ({ navigation }) => {
                 source={require('../../images/Blaiti.jpg')}
               />
               <View style={styles.titleTextContainer}>
-                <Text style={styles.nameText}>Rakesh Mehata</Text>
-                <Text style={styles.posText}>S/O Dinesh mehata</Text>
+                <Text style={styles.nameText}>{user?.name}</Text>
+                <Text style={styles.posText}>{user?.guardianName}</Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <FontIcon
                     name="mobile-alt"
@@ -107,7 +122,7 @@ const Profile = ({ navigation }) => {
                       styles.posText,
                       { color: theme.colors.gray, marginLeft: 10 }
                     ]}>
-                    xxxxxxxxxx
+                    {user?.mobileNumber}
                   </Text>
                 </View>
               </View>
@@ -139,8 +154,7 @@ const Profile = ({ navigation }) => {
                       flexWrap: 'wrap'
                     }
                   ]}>
-                  D/111, Ambivali Village, Versova Road, Andheri (West), Mumbai
-                  - 400053 Ambivali Village, Versova Road
+                  {user?.address}
                 </Text>
               </View>
             </View>
