@@ -5,11 +5,10 @@ import * as theme from '../constants/theme'
 import { firstChOfEachWord } from '../utils/NameBadge'
 
 const Patient = ({ pateint, viewPatient }) => {
-  const id = parseInt(pateint.id)
   return (
     <TouchableOpacity
       onPress={() => {
-        viewPatient(pateint)
+        viewPatient(pateint.p_id)
       }}>
       <View style={styles.container}>
         <Avatar bg="gray.400">{firstChOfEachWord(pateint.name)}</Avatar>

@@ -14,6 +14,7 @@ export interface Database {
   // Create
   addPatient(name: string, healthId: string, mobileNumber: string, sex: string, address: string, guardianName: string): Promise<void>;
   // Read
+  getPatientById(p_id:number):Promise<Patient>;
   getPatientsList(limit:number,orderby:Order): Promise<Patient[]>;
 }
 
@@ -52,6 +53,32 @@ async function getPatientsList(limit:number,orderby:Order=Order.asc) {
         lists.push(record);
       }
       return lists;
+    });
+}
+
+// Get patient by patient id
+async function getPatientById(p_id:number) {
+  console.log("[db] Fetching patient by id");
+  return getDatabase()
+    .then((db) =>
+      // Get all the lists, ordered by newest lists first
+      db.executeSql(`SELECT * FROM Patient where p_id= ${p_id}`),
+    )
+    .then(([results]) => {
+      if (results === undefined) {
+        return undefined
+      }
+      
+      const count = results.rows.length;
+      console.log(`[db] Patients count: ${count}`);
+      let patient:Patient|undefined;
+      if(count>0){
+        patient = results.rows.item(0);
+      }
+      else{
+        patient=undefined
+      }
+      return patient;
     });
 }
 // "Private" helpers
@@ -116,4 +143,5 @@ function handleAppStateChange(nextAppState: AppStateStatus) {
 export const sqliteDatabase: Database = {
   addPatient,
   getPatientsList,
+  getPatientById,
 };

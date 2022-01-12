@@ -17,6 +17,8 @@ import * as theme from '../../constants/theme'
 import Pateint from '../../components/pateint'
 import FilterModal from '../../components/filterPatient'
 import AddPatientForm from '../../components/addPatient'
+import { setSelectedPatientId } from '../../stores/actions/user.action'
+
 const Home = ({ navigation, user }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const dispatch = useDispatch()
@@ -27,8 +29,9 @@ const Home = ({ navigation, user }) => {
   const ToggleFilterVisible = () => {
     setFilterVisible(!filterVisible)
   }
-  const onPressView = () => {
-    navigation.navigate('Profile', {})
+  const onPressView = id => {
+    dispatch(setSelectedPatientId(id))
+    setImmediate(() => navigation.navigate('Profile', {}))
   }
 
   function Header(params) {

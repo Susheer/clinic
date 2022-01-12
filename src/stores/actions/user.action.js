@@ -3,7 +3,8 @@ import {
   FETCH_USER_SUCCESS,
   FETCH_USER_FAILED,
   FETCH_USER_REQUEST,
-  ADD_NEW_PATIENT
+  ADD_NEW_PATIENT,
+  SELECTED_PATIENT_ID
 } from '../constants/user.constants'
 
 export const fetchUserRequest = () => {
@@ -37,4 +38,7 @@ export const fetchDataUser = () => async dispatch => {
 
 export const addNewPatientList = patient => {
   return { type: ADD_NEW_PATIENT, payload: patient }
+}
+export const setSelectedPatientId = p_id => {
+  return { type: SELECTED_PATIENT_ID, payload: p_id }
 }
