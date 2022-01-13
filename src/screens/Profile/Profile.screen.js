@@ -69,8 +69,8 @@ const Profile = ({ navigation }) => {
           setUser(user)
         })
         .catch(reason => {
-          setUser({})
-          console.log('Error', reason)
+          setUser(null)
+          console.debug('Error', reason)
         })
     }
   }, [patientId])
@@ -88,7 +88,9 @@ const Profile = ({ navigation }) => {
             <View>
               <TouchableOpacity
                 style={styles.addPatientIconContainer}
-                onPress={() => {}}>
+                onPress={() => {
+                  setImmediate(() => navigation.navigate('Prescription', {}))
+                }}>
                 <FontIcon
                   name="prescription"
                   size={25}
