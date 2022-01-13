@@ -1,26 +1,26 @@
 /**
  * Clinic
- * Copyright (c) 2021-2025 Sudheer gupta 
+ * Copyright (c) 2021-2025 Sudheer gupta
  */
-import SQLite from "react-native-sqlite-storage";
+import SQLite from 'react-native-sqlite-storage'
 
 export class DatabaseInitialization {
   // Perform any updates to the database schema. These can occur during initial configuration, or after an app store update.
   // This should be called each time the database is opened.
   public updateDatabaseTables(database: SQLite.SQLiteDatabase): Promise<void> {
-    let dbVersion: number = 0;
-    console.log("Beginning database updates...");
+    let dbVersion: number = 0
+    console.log('Beginning database updates...')
 
     // First: create tables if they do not already exist
     return database
       .transaction(this.createTables)
       .then(() => {
         // Get the current database version
-        return this.getDatabaseVersion(database);
+        return this.getDatabaseVersion(database)
       })
-      .then((version) => {
-        dbVersion = version;
-        console.log("Current database version is: " + dbVersion);
+      .then(version => {
+        dbVersion = version
+        console.log('Current database version is: ' + dbVersion)
 
         // Perform DB updates based on this version
 
@@ -30,7 +30,7 @@ export class DatabaseInitialization {
           // return database.transaction(this.preVersion1Inserts);
         }
         // otherwise,
-        return;
+        return
       })
       .then(() => {
         if (dbVersion < 2) {
@@ -38,21 +38,22 @@ export class DatabaseInitialization {
           // return database.transaction(this.preVersion2Inserts);
         }
         // otherwise,
-        return;
-      });
+        return
+      })
   }
 
   // Perform initial setup of the database tables
   private createTables(transaction: SQLite.Transaction) {
     // DANGER! For dev only
-    const dropAllTables = false;
+    const dropAllTables = false
     if (dropAllTables) {
-      transaction.executeSql("DROP TABLE IF EXISTS Version;");
-      transaction.executeSql("DROP TABLE IF EXISTS Patient;");  
+      transaction.executeSql('DROP TABLE IF EXISTS Version;')
+      transaction.executeSql('DROP TABLE IF EXISTS Patient;')
+      transaction.executeSql('DROP TABLE IF EXISTS Prescription;')
     }
 
-   // Patient table
-        transaction.executeSql(`
+    // Patient table
+    transaction.executeSql(`
         CREATE TABLE IF NOT EXISTS Patient(
           p_id INTEGER PRIMARY KEY AUTOINCREMENT,
           name TEXT NOT NULL,
@@ -62,34 +63,48 @@ export class DatabaseInitialization {
           address TEXT NOT NULL,
           guardianName TEXT NOT NULL
         );
-      `);
+      `)
+
+    // Prescription table
+    transaction.executeSql(`
+     CREATE TABLE IF NOT EXISTS Prescription(
+       prs_id INTEGER PRIMARY KEY AUTOINCREMENT,
+       createdAt TEXT,
+       updateAt TEXT,
+       prescription TEXT,
+       totalAmount TEXT,
+       paidAmount TEXT,
+       remainBalance TEXT,
+       patinetId INTEGER,
+       FOREIGN KEY(patinetId) REFERENCES Patient(p_id)
+     );
+   `)
     // Version table
     transaction.executeSql(`
       CREATE TABLE IF NOT EXISTS Version(
         version_id INTEGER PRIMARY KEY NOT NULL,
         version INTEGER
       );
-    `);
-
+    `)
   }
 
   // Get the version of the database, as specified in the Version table
   private getDatabaseVersion(database: SQLite.SQLiteDatabase): Promise<number> {
     // Select the highest version number from the version table
     return database
-      .executeSql("SELECT version FROM Version ORDER BY version DESC LIMIT 1;")
+      .executeSql('SELECT version FROM Version ORDER BY version DESC LIMIT 1;')
       .then(([results]) => {
         if (results.rows && results.rows.length > 0) {
-          const version = results.rows.item(0).version;
-          return version;
+          const version = results.rows.item(0).version
+          return version
         } else {
-          return 0;
+          return 0
         }
       })
-      .catch((error) => {
-        console.log(`No version set. Returning 0. Details: ${error}`);
-        return 0;
-      });
+      .catch(error => {
+        console.log(`No version set. Returning 0. Details: ${error}`)
+        return 0
+      })
   }
 
   // Once the app has shipped, use the following functions as a template for updating the database:
