@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   View,
@@ -7,32 +7,21 @@ import {
   Image,
   Text,
   FlatList,
-  SafeAreaView,
-  ScrollView
+  SafeAreaView
 } from 'react-native'
-import styles from './Profile.style'
 import Icon from 'react-native-vector-icons/Ionicons'
 import FontIcon from 'react-native-vector-icons/Fontisto'
+import styles from './Profile.style'
+import { useDatabase } from '../../context/DatabaseContext'
 import Experience from '../../components/Experience'
-import Company from '../../components/company'
-import * as company from '../../constants/jobs'
 import * as theme from '../../constants/theme'
+import PrescriptionComp from '../../components/Prescription/card'
 
 const allergies = [
   {
     id: '1',
     updatedAt: '10th,Jan 2018',
     name: 'A red, itchy rash'
-  },
-  {
-    id: '2',
-    updatedAt: '12th,May 2020',
-    name: 'wheezing and coughing'
-  },
-  {
-    id: '3',
-    updatedAt: '12th,Jun 2020',
-    name: 'A runny or blocked nose'
   }
 ]
 const Edu = [
@@ -52,8 +41,27 @@ const Edu = [
   }
 ]
 const Profile = ({ navigation }) => {
+  const patientId = useSelector(state => state.userReducer.selectedPatientId)
   const state = useSelector(state => state.userReducer)
-  console.log('Staet profile', state)
+  const [prescriptionList, setPrescriptionList] = useState([])
+  const [user, setUser] = useState(undefined)
+  const dbCTX = useDatabase()
+  useEffect(() => {
+    if (patientId) {
+      dbCTX
+        .getPatientById(patientId)
+        .then(user => {
+          setUser(user)
+        })
+        .catch(reason => {
+          setUser(null)
+          console.debug('Error', reason)
+        })
+      dbCTX.getPrescriptionById(patientId).then(res => {
+        setPrescriptionList(res)
+      })
+    }
+  }, [patientId])
   return (
     <>
       <StatusBar barStyle="dark-content" backgroundColor={'#f9f9f9'} />
@@ -68,7 +76,9 @@ const Profile = ({ navigation }) => {
             <View>
               <TouchableOpacity
                 style={styles.addPatientIconContainer}
-                onPress={() => {}}>
+                onPress={() => {
+                  setImmediate(() => navigation.navigate('Prescription', {}))
+                }}>
                 <FontIcon
                   name="prescription"
                   size={25}
@@ -80,7 +90,7 @@ const Profile = ({ navigation }) => {
 
           {/* Body */}
 
-          <ScrollView
+          <View
             style={[styles.body, { flexGrow: 1 }]}
             nestedScrollEnabled={true}>
             <View style={styles.titleContainer}>
@@ -89,8 +99,8 @@ const Profile = ({ navigation }) => {
                 source={require('../../images/Blaiti.jpg')}
               />
               <View style={styles.titleTextContainer}>
-                <Text style={styles.nameText}>Rakesh Mehata</Text>
-                <Text style={styles.posText}>S/O Dinesh mehata</Text>
+                <Text style={styles.nameText}>{user?.name}</Text>
+                <Text style={styles.posText}>{user?.guardianName}</Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <FontIcon
                     name="mobile-alt"
@@ -102,7 +112,7 @@ const Profile = ({ navigation }) => {
                       styles.posText,
                       { color: theme.colors.gray, marginLeft: 10 }
                     ]}>
-                    xxxxxxxxxx
+                    {user?.mobileNumber}
                   </Text>
                 </View>
               </View>
@@ -134,14 +144,13 @@ const Profile = ({ navigation }) => {
                       flexWrap: 'wrap'
                     }
                   ]}>
-                  D/111, Ambivali Village, Versova Road, Andheri (West), Mumbai
-                  - 400053 Ambivali Village, Versova Road
+                  {user?.address}
                 </Text>
               </View>
             </View>
             {/* Allergies */}
             <Text style={styles.titleText}>Allergies</Text>
-            <SafeAreaView>
+            <SafeAreaView style={{ flex: 1 }}>
               <FlatList
                 data={allergies}
                 showsHorizontalScrollIndicator={false}
@@ -157,23 +166,42 @@ const Profile = ({ navigation }) => {
               <Text style={[styles.popularText, { marginLeft: 20 }]}>
                 Prescriptions
               </Text>
-              <SafeAreaView>
-                <FlatList
-                  data={company.companies}
-                  horizontal={true}
-                  showsHorizontalScrollIndicator={false}
-                  keyExtractor={item => item.id}
-                  renderItem={({ item }) => {
-                    return (
-                      <TouchableOpacity activeOpacity={1} style={{ flex: 1 }}>
-                        <Company item={item} />
-                      </TouchableOpacity>
-                    )
-                  }}
-                />
-              </SafeAreaView>
+              <FlatList
+                data={prescriptionList}
+                horizontal
+                keyExtractor={item => item.prs_id}
+                renderItem={({ item }) => {
+                  if (!item) {
+                    return <Text>No Item</Text>
+                  }
+                  const {
+                    createdAt,
+                    paidAmount,
+                    patinetId,
+                    prescription,
+                    prs_id,
+                    remainBalance,
+                    totalAmount,
+                    updateAt
+                  } = item
+                  return (
+                    <TouchableOpacity activeOpacity={1} style={{ flex: 1 }}>
+                      <PrescriptionComp
+                        createdAt={createdAt}
+                        paidAmount={paidAmount}
+                        patinetId={patinetId}
+                        prescription={prescription}
+                        id={prs_id}
+                        remainBalance={remainBalance}
+                        totalAmount={totalAmount}
+                        updateAt={updateAt}
+                      />
+                    </TouchableOpacity>
+                  )
+                }}
+              />
             </View>
-          </ScrollView>
+          </View>
         </View>
       </SafeAreaView>
     </>

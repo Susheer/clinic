@@ -4,7 +4,14 @@ import styles from './text.style'
 export function CTextinput(props) {
   return (
     <View style={styles.inputText}>
-      <TextInput {...props} style={{ ...props.style, color: 'black' }} />
+      <TextInput
+        {...props}
+        style={{
+          ...props.style,
+          color: 'black',
+          width: '100%'
+        }}
+      />
     </View>
   )
 }

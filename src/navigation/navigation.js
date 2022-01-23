@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Home from '../screens/Home/Home.screen'
 import Profile from '../screens/Profile/Profile.screen'
+
+import Prescription from '../screens/Prescription/Prescription.screen'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { fetchUserSuccess } from '../stores/actions/user.action'
@@ -44,10 +46,11 @@ const MainNavigation = props => {
   const dispatch = useDispatch()
   const { refPatientList } = useSelector(state => state.userformReducer)
   useEffect(() => {
+    console.log('props', props)
     sqliteDatabase
       .getPatientsList(10, 'DESC')
       .then(response => {
-        console.log('Apps lists', response)
+        // console.log('Apps lists', response)
         dispatch({ type: 'FETCH_USER_SUCCESS', payload: response })
       })
       .catch(error => {
@@ -66,6 +69,11 @@ const MainNavigation = props => {
           name="Profile"
           options={{ headerShown: false }}
           component={Profile}
+        />
+        <Stack.Screen
+          name="Prescription"
+          options={{ headerShown: false }}
+          component={Prescription}
         />
       </Stack.Navigator>
     </NavigationContainer>

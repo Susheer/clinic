@@ -23,7 +23,7 @@ const JobModal = props => {
             color={theme.colors.black}
           />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>{props.item.company}</Text>
+        <Text style={styles.headerTitle}>{'company'}</Text>
         <View style={{ padding: 20 }}></View>
       </View>
 
@@ -37,29 +37,29 @@ const JobModal = props => {
               size={80}
               color={theme.colors.black}
             />
-            <Text style={styles.jobTitle}>{props.item.job}</Text>
+            <Text style={styles.jobTitle}>{'job'}</Text>
             <Text style={styles.jobSalary}>
-              Total Amount &#8377;{props.item.total}-/
+              Total Amount &#8377;{props.totalAmount}-/
             </Text>
             <Text style={styles.jobSalary}>
-              Paid &#8377;{props.item.paid}-/
+              Paid &#8377;{props.paidAmount}-/
             </Text>
           </View>
           {/* Job Details */}
           <View>
             <Text style={styles.jobTitle}>About the opportunity</Text>
-            <Text style={styles.descriptionText}>{props.item.opportunity}</Text>
+            <Text style={styles.descriptionText}>{'my oportunity'}</Text>
             <Text style={styles.jobTitle}>Job Responsabilities</Text>
             <View style={{ flexDirection: 'row', marginTop: 7 }}>
               <Icon name="check" size={20} color={theme.colors.black} />
               <Text style={[styles.descriptionText, { marginTop: 0 }]}>
-                {props.item.responsabilities.first}
+                {'first'}
               </Text>
             </View>
             <View style={{ flexDirection: 'row', marginTop: 7 }}>
               <Icon name="check" size={20} color={theme.colors.black} />
               <Text style={[styles.descriptionText, { marginTop: 0 }]}>
-                {props.item.responsabilities.second}
+                {'second'}
               </Text>
             </View>
           </View>

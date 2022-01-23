@@ -3,7 +3,8 @@ import {
   FETCH_USER_REQUEST,
   FETCH_USER_FAILED,
   FETCH_USER_SUCCESS,
-  ADD_NEW_PATIENT
+  ADD_NEW_PATIENT,
+  SELECTED_PATIENT_ID
 } from '../constants/user.constants'
 
 const initialState = {
@@ -18,6 +19,11 @@ export const userReducer = (state = initialState, action) => {
       return {
         ...state,
         isLoading: true
+      }
+    case SELECTED_PATIENT_ID:
+      return {
+        ...state,
+        selectedPatientId: payload
       }
 
     case FETCH_USER_SUCCESS:
@@ -36,7 +42,6 @@ export const userReducer = (state = initialState, action) => {
         ...state,
         users: [...state.users, payload]
       }
-
     default:
       return state
   }
