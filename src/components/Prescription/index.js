@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { View, TouchableOpacity } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import { Picker } from '@react-native-community/picker'
 import { VStack, Text, ScrollView } from 'native-base'
 import { useToast } from 'native-base'
 import * as theme from '../../constants/theme'
@@ -12,21 +11,21 @@ import { setrefPatientsList } from './redux/actions'
 import { CTextinput } from '../Textinput'
 import { useDatabase } from '../../context/DatabaseContext'
 
-const AddPatient = props => {
+const Prescription = props => {
   const dispatch = useDispatch()
   const ctx = useDatabase()
   const toast = useToast()
   const [prescription, setPrescription] = useState('')
-  const [totalAmount, setTotalAmount] = useState(0)
-  const [paidAmount, setPaidAmount] = useState(0)
-  const [remainBalance, setRemainBalance] = useState(0)
+  const [totalAmount, setTotalAmount] = useState()
+  const [paidAmount, setPaidAmount] = useState()
+  const [remainBalance, setRemainBalance] = useState()
   const [error_description, setErrorDescription] = useState('')
   const { onCloseForm } = props
   const clearForm = () => {
     setPrescription('')
-    setTotalAmount('')
-    setPaidAmount('')
-    setRemainBalance('')
+    setTotalAmount(0)
+    setPaidAmount(0)
+    setRemainBalance(0)
     setErrorDescription('')
   }
   useEffect(() => {
@@ -35,12 +34,13 @@ const AddPatient = props => {
       setRemainBalance(remain)
     }
   }, [paidAmount, totalAmount])
+  const { p_id } = props
   let body = (
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.body}>
         <CTextinput
           multiline
-          style={{ texAlign: 'center' }}
+          style={{ textAlign: 'center' }}
           numberOfLines={14}
           defaultValue={prescription}
           onChangeText={text => setPrescription(text)}
@@ -53,19 +53,19 @@ const AddPatient = props => {
           }}>
           <View style={[styles.col, { flex: 2 }]}>
             <CTextinput
+              keyboardType="numeric"
               placeholder="Total amount"
               style={{ marginLeft: 10 }}
-              keyboardType="decimal-pad"
-              defaultValue={totalAmount}
+              defaultValue={convertString(totalAmount)}
               onChangeText={text => setTotalAmount(text)}
             />
           </View>
           <View style={[styles.col, { marginLeft: 5 }]}>
             <CTextinput
-              keyboardType="decimal-pad"
+              keyboardType="numeric"
               placeholder="Amount paid"
               style={{ marginLeft: 10 }}
-              defaultValue={paidAmount}
+              defaultValue={convertString(paidAmount)}
               onChangeText={value => {
                 setPaidAmount(value)
               }}
@@ -110,48 +110,27 @@ const AddPatient = props => {
         <TouchableOpacity
           style={styles.btnContainer}
           onPress={() => {
-            let data = {
-              name,
-              healthId,
-              mobileNumber,
-              sex,
-              address,
-              guardianName
-            }
-
-            if (!name) {
-              setErrorDescription('Please enter patient name !')
-            } else if (!mobileNumber) {
-              setErrorDescription('Please enter mobile number.')
-            } else if (!sex || sex === 'Sex') {
-              setErrorDescription("Selecte patient's gender")
-            } else if (!address) {
-              setErrorDescription("Enter patient's address before submitting.")
-            } else if (!guardianName) {
-              setErrorDescription("Fill patient's gaurdian's name.")
+            if (!prescription) {
+              setErrorDescription('Prescription can be blank!')
             } else {
-              setImmediate(() => dispatch(addNewPatientList(data)))
               ctx
-                .addPatient(
-                  name,
-                  healthId,
-                  mobileNumber,
-                  sex,
-                  address,
-                  guardianName
+                .addPrescription(
+                  prescription,
+                  totalAmount,
+                  paidAmount,
+                  remainBalance,
+                  p_id
                 )
                 .then(res => {
-                  setImmediate(() => dispatch(setrefPatientsList(true)))
-                })
-                .then(res => {
-                  console.log('add patient err', res)
+                  props.onAdded()
+                  // setImmediate(() => dispatch(setrefPatientsList(true)))
                 })
                 .catch(err => {
-                  console.log('add patient', err)
+                  console.log('error in adding prescription', err)
                 })
               setImmediate(() => {
                 toast.show({
-                  title: `Patient ${name} added !! `
+                  title: `Prescription added`
                 })
                 clearForm()
                 onCloseForm()
@@ -164,5 +143,8 @@ const AddPatient = props => {
     </View>
   )
 }
+function convertString(number) {
+  return number ? number.toString() : ''
+}
 
-export default AddPatient
+export default Prescription

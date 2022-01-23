@@ -14,30 +14,14 @@ import FontIcon from 'react-native-vector-icons/Fontisto'
 import styles from './Profile.style'
 import { useDatabase } from '../../context/DatabaseContext'
 import Experience from '../../components/Experience'
-import Company from '../../components/company'
-import * as company from '../../constants/jobs'
 import * as theme from '../../constants/theme'
+import PrescriptionComp from '../../components/Prescription/card'
 
 const allergies = [
   {
     id: '1',
     updatedAt: '10th,Jan 2018',
     name: 'A red, itchy rash'
-  },
-  {
-    id: '2',
-    updatedAt: '12th,May 2020',
-    name: 'wheezing and coughing'
-  },
-  {
-    id: '3',
-    updatedAt: '12th,Jun 2020',
-    name: 'A runny or blocked nose'
-  },
-  {
-    id: '4',
-    updatedAt: '12th,Jun 2020',
-    name: 'A runny or blocked nose'
   }
 ]
 const Edu = [
@@ -59,6 +43,7 @@ const Edu = [
 const Profile = ({ navigation }) => {
   const patientId = useSelector(state => state.userReducer.selectedPatientId)
   const state = useSelector(state => state.userReducer)
+  const [prescriptionList, setPrescriptionList] = useState([])
   const [user, setUser] = useState(undefined)
   const dbCTX = useDatabase()
   useEffect(() => {
@@ -72,6 +57,9 @@ const Profile = ({ navigation }) => {
           setUser(null)
           console.debug('Error', reason)
         })
+      dbCTX.getPrescriptionById(patientId).then(res => {
+        setPrescriptionList(res)
+      })
     }
   }, [patientId])
   return (
@@ -178,16 +166,36 @@ const Profile = ({ navigation }) => {
               <Text style={[styles.popularText, { marginLeft: 20 }]}>
                 Prescriptions
               </Text>
-
               <FlatList
-                data={company.companies}
-                horizontal={true}
-                showsHorizontalScrollIndicator={false}
-                keyExtractor={item => item.id}
+                data={prescriptionList}
+                horizontal
+                keyExtractor={item => item.prs_id}
                 renderItem={({ item }) => {
+                  if (!item) {
+                    return <Text>No Item</Text>
+                  }
+                  const {
+                    createdAt,
+                    paidAmount,
+                    patinetId,
+                    prescription,
+                    prs_id,
+                    remainBalance,
+                    totalAmount,
+                    updateAt
+                  } = item
                   return (
                     <TouchableOpacity activeOpacity={1} style={{ flex: 1 }}>
-                      <Company item={item} />
+                      <PrescriptionComp
+                        createdAt={createdAt}
+                        paidAmount={paidAmount}
+                        patinetId={patinetId}
+                        prescription={prescription}
+                        id={prs_id}
+                        remainBalance={remainBalance}
+                        totalAmount={totalAmount}
+                        updateAt={updateAt}
+                      />
                     </TouchableOpacity>
                   )
                 }}

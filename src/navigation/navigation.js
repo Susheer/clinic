@@ -46,10 +46,11 @@ const MainNavigation = props => {
   const dispatch = useDispatch()
   const { refPatientList } = useSelector(state => state.userformReducer)
   useEffect(() => {
+    console.log('props', props)
     sqliteDatabase
       .getPatientsList(10, 'DESC')
       .then(response => {
-        console.log('Apps lists', response)
+        // console.log('Apps lists', response)
         dispatch({ type: 'FETCH_USER_SUCCESS', payload: response })
       })
       .catch(error => {

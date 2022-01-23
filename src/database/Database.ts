@@ -6,6 +6,7 @@ import SQLite from 'react-native-sqlite-storage'
 import { DatabaseInitialization } from './DatabaseInitialization'
 import { Patient, Sex } from '../types/Patient'
 import { Order } from '../types/Order'
+import { PrescriptionType } from '../types/PrescriptionType'
 import { DATABASE } from './Constants'
 import { DropboxDatabaseSync } from '../sync/dropbox/DropboxDatabaseSync'
 import { AppState, AppStateStatus } from 'react-native'
@@ -29,6 +30,7 @@ export interface Database {
   ): Promise<void>
   // Read
   getPatientById(p_id: number): Promise<Patient>
+  getPrescriptionById(patient_id: number): Promise<PrescriptionType[]>
   getPatientsList(limit: number, orderby: Order): Promise<Patient[]>
 }
 
@@ -67,7 +69,7 @@ async function addPrescription(
   return getDatabase()
     .then(db =>
       db.executeSql(
-        'INSERT INTO Prescription (patinetId,prescription,totalAmount,paidAmount,remainBalance) VALUES (?,?,?,?,?,?);',
+        'INSERT INTO Prescription (patinetId,prescription,totalAmount,paidAmount,remainBalance) VALUES (?,?,?,?,?);',
         [patinetId, prescription, totalAmount, paidAmount, remainBalance]
       )
     )
@@ -126,6 +128,26 @@ async function getPatientById(p_id: number) {
       return patient
     })
 }
+async function getPrescriptionById(p_id: number) {
+  return getDatabase()
+    .then(db =>
+      // Get all the lists, ordered by newest lists first
+      db.executeSql(`SELECT * FROM Prescription where patinetId= ${p_id}`)
+    )
+    .then(([results]) => {
+      if (results === undefined) {
+        return []
+      }
+      const count = results.rows.length
+      const lists: PrescriptionType[] = []
+      for (let i = 0; i < count; i++) {
+        const row: PrescriptionType = results.rows.item(i)
+        const record = Object.assign({}, row)
+        lists.push(record)
+      }
+      return lists
+    })
+}
 // "Private" helpers
 
 async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
@@ -138,7 +160,7 @@ async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
 
 // Open a connection to the database
 async function open(): Promise<SQLite.SQLiteDatabase> {
-  SQLite.DEBUG(true)
+  SQLite.DEBUG(false)
   SQLite.enablePromise(true)
 
   if (databaseInstance) {
@@ -193,5 +215,6 @@ export const sqliteDatabase: Database = {
   addPatient,
   addPrescription,
   getPatientsList,
-  getPatientById
+  getPatientById,
+  getPrescriptionById
 }

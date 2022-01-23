@@ -69,8 +69,8 @@ export class DatabaseInitialization {
     transaction.executeSql(`
      CREATE TABLE IF NOT EXISTS Prescription(
        prs_id INTEGER PRIMARY KEY AUTOINCREMENT,
-       createdAt TEXT,
-       updateAt TEXT,
+       createdAt  REAL DEFAULT (datetime('now', 'localtime')),
+       updateAt  REAL DEFAULT (datetime('now', 'localtime')),
        prescription TEXT,
        totalAmount TEXT,
        paidAmount TEXT,

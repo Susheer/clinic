@@ -1,0 +1,3 @@
+export const ACTION_TYPE = {
+  REF_PATIENT_LIST: 'REF_PATIENT_LIST'
+}
