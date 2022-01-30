@@ -1,15 +1,16 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { View, TouchableOpacity } from 'react-native'
+
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Picker } from '@react-native-community/picker'
-import { VStack, Text, ScrollView } from 'native-base'
-import { useToast } from 'native-base'
+import { useToast, Text, ScrollView } from 'native-base'
 import * as theme from '../../constants/theme'
 import { styles } from './form.style'
 import { addNewPatientList } from '../../stores/actions/user.action'
 import { setrefPatientsList } from './redux/actions'
 import { CTextinput } from '../Textinput'
+import AddAllergies from './Allergies'
 import { useDatabase } from '../../context/DatabaseContext'
 
 const AddPatient = props => {
@@ -23,6 +24,7 @@ const AddPatient = props => {
   const [healthId, sethealthId] = useState('')
   const [mobileNumber, setMobileNumber] = useState('')
   const [address, setAddress] = useState('')
+  const [allergies, setAllergies] = useState([])
   const [error_description, setErrorDescription] = useState('')
   const { onCloseForm } = props
   const clearForm = () => {
@@ -33,6 +35,13 @@ const AddPatient = props => {
     setMobileNumber('')
     setAddress('')
     setErrorDescription('')
+  }
+  const addAllergies = title => {
+    setAllergies([...allergies, title])
+  }
+  const delAllergie = index => {
+    const temp = allergies.filter((_, itemI) => itemI !== index)
+    setAllergies(temp)
   }
 
   let body = (
@@ -53,7 +62,6 @@ const AddPatient = props => {
           defaultValue={healthId}
           onChangeText={text => sethealthId(text)}
         />
-
         <View
           style={{
             justifyContent: 'center',
@@ -87,11 +95,11 @@ const AddPatient = props => {
           onChangeText={text => setAddress(text)}
           placeholder="Address"
         />
-        <VStack space={1} alignItems="center" mt={3}>
-          <Text fontSize="md" color={'red.500'}>
-            {error_description}
-          </Text>
-        </VStack>
+        <AddAllergies
+          allergies={allergies}
+          onCreate={addAllergies}
+          onDel={delAllergie}
+        />
       </View>
     </ScrollView>
   )
