@@ -21,6 +21,7 @@ export interface Database {
     address: string,
     guardianName: string
   ): Promise<void>
+  addAllergy(list: [string], patientId: number): Promise<void>
   addPrescription(
     prescription: string,
     totalAmount: number,
@@ -77,6 +78,35 @@ async function addPrescription(
       // Queue database upload
       return Promise.resolve()
     })
+}
+async function addAllergy(list: [string], patientId: number) {
+  if (patientId < 0 || patientId == undefined) {
+    throw Error('PATIENT_NOT_FOUND')
+  }
+  let rows: [string | number]
+  let sizeOFRow: [string]
+  list.forEach((value, index) => {
+    rows.push(value)
+    rows.push(patientId)
+    sizeOFRow.push('(?,?)')
+  })
+  getDatabase().then(db =>
+    db.transaction(tx => {
+      tx.executeSql(
+        `INSERT INTO Allergies (name,patientId) VALUES ${sizeOFRow.join()}`,
+        rows,
+        (tx, results) => {
+          if (results.rowsAffected > 0) {
+            console.log('Insert success', results)
+            return Promise.resolve()
+          } else {
+            console.log('Insert failed')
+            return Promise.reject()
+          }
+        }
+      )
+    })
+  )
 }
 
 // Get an array of all the patinets in database
@@ -216,5 +246,6 @@ export const sqliteDatabase: Database = {
   addPrescription,
   getPatientsList,
   getPatientById,
-  getPrescriptionById
+  getPrescriptionById,
+  addAllergy
 }
