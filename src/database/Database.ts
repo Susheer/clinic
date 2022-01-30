@@ -10,6 +10,7 @@ import { PrescriptionType } from '../types/PrescriptionType'
 import { DATABASE } from './Constants'
 import { DropboxDatabaseSync } from '../sync/dropbox/DropboxDatabaseSync'
 import { AppState, AppStateStatus } from 'react-native'
+import { EmptyObject } from 'redux'
 
 export interface Database {
   // Create
@@ -20,7 +21,7 @@ export interface Database {
     sex: string,
     address: string,
     guardianName: string
-  ): Promise<void>
+  ): Promise<number>
   addAllergy(list: [string], patientId: number): Promise<void>
   addPrescription(
     prescription: string,
@@ -46,7 +47,7 @@ async function addPatient(
   sex: string,
   address: string,
   guardianName: string
-): Promise<void> {
+): Promise<number> {
   return getDatabase()
     .then(db =>
       db.executeSql(
@@ -55,8 +56,10 @@ async function addPatient(
       )
     )
     .then(([results]) => {
+      let patientId: number
+      patientId = results.insertId
       // Queue database upload
-      return Promise.resolve() // databaseSync.upload();
+      return Promise.resolve(patientId) // databaseSync.upload();
     })
 }
 // Insert a new patient into the database
@@ -80,16 +83,20 @@ async function addPrescription(
     })
 }
 async function addAllergy(list: [string], patientId: number) {
-  if (patientId < 0 || patientId == undefined) {
+  if (patientId < 0 || patientId == undefined || !Array.isArray(list)) {
     throw Error('PATIENT_NOT_FOUND')
   }
-  let rows: [string | number]
-  let sizeOFRow: [string]
+  if (!list.length) {
+    throw Error('EMPTY_ALLERGY')
+  }
+  let rows = []
+  let sizeOFRow = []
   list.forEach((value, index) => {
     rows.push(value)
     rows.push(patientId)
     sizeOFRow.push('(?,?)')
   })
+  console.log('model addAllergy-invoked list', list, sizeOFRow, rows)
   getDatabase().then(db =>
     db.transaction(tx => {
       tx.executeSql(

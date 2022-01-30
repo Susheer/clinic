@@ -157,20 +157,39 @@ const AddPatient = props => {
                 )
                 .then(res => {
                   setImmediate(() => dispatch(setrefPatientsList(true)))
+                  return res
                 })
-                .then(res => {
-                  console.log('add patient err', res)
+                .then(patientId => {
+                  console.log('adding allergies', allergies)
+                  if (allergies.length) {
+                    ctx
+                      .addAllergy(allergies, patientId)
+                      .then(success => {
+                        setImmediate(() => {
+                          toast.show({
+                            title: `Patient ${name} added !! `
+                          })
+                          clearForm()
+                          onCloseForm()
+                        })
+                      })
+                      .catch(reason => {
+                        // @todo delete patient here
+                        console.log('Alergies failed', reason)
+                      })
+                  } else {
+                    setImmediate(() => {
+                      toast.show({
+                        title: `Patient ${name} added !! `
+                      })
+                      clearForm()
+                      onCloseForm()
+                    })
+                  }
                 })
                 .catch(err => {
                   console.log('add patient', err)
                 })
-              setImmediate(() => {
-                toast.show({
-                  title: `Patient ${name} added !! `
-                })
-                clearForm()
-                onCloseForm()
-              })
             }
           }}>
           <Text style={styles.btnText}>Submit</Text>
