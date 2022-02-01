@@ -50,6 +50,7 @@ export class DatabaseInitialization {
       transaction.executeSql('DROP TABLE IF EXISTS Version;')
       transaction.executeSql('DROP TABLE IF EXISTS Patient;')
       transaction.executeSql('DROP TABLE IF EXISTS Prescription;')
+      transaction.executeSql('DROP TABLE IF EXISTS  Allergies;')
     }
 
     // Patient table
@@ -77,6 +78,17 @@ export class DatabaseInitialization {
        remainBalance TEXT,
        patinetId INTEGER,
        FOREIGN KEY(patinetId) REFERENCES Patient(p_id)
+     );
+   `)
+    // Allergies table
+    transaction.executeSql(`
+     CREATE TABLE IF NOT EXISTS Allergies(
+       aId INTEGER PRIMARY KEY AUTOINCREMENT,
+       createdAt  REAL DEFAULT (datetime('now', 'localtime')),
+       updateAt  REAL DEFAULT (datetime('now', 'localtime')),
+       name TEXT,
+       patientId INTEGER NOT NULL,
+       FOREIGN KEY(patientId) REFERENCES Patient(p_id)
      );
    `)
     // Version table

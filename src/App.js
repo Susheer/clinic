@@ -7,9 +7,31 @@ import { store } from './stores'
 import { DatabaseContext, useDatabase } from './context/DatabaseContext'
 import { sqliteDatabase } from './database/Database'
 
-import { NativeBaseProvider } from 'native-base'
+import { NativeBaseProvider, extendTheme } from 'native-base'
 let appState
 const App = () => {
+  const theme = extendTheme({
+    components: {
+      Input: {
+        baseStyle: {
+          color: 'black',
+          borderColor: 'black',
+          _focus: {
+            color: 'red',
+            borderColor: 'black'
+          }
+        }
+      },
+      Button: {
+        baseStyle: {
+          borderStyle: 'solid',
+          borderWidth: 1,
+          borderRadius: 4
+        }
+      }
+    }
+  })
+
   // Initialize state
   const [isLoading, setIsLoading] = useState(false)
   const [loadingText, setLoadingText] = useState('Loading...')
@@ -61,7 +83,7 @@ const App = () => {
   if (isReady()) {
     return (
       <DatabaseContext.Provider value={sqliteDatabase}>
-        <NativeBaseProvider>
+        <NativeBaseProvider theme={theme}>
           <Provider store={store}>
             <MainNavigation />
           </Provider>

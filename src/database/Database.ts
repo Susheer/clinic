@@ -6,10 +6,12 @@ import SQLite from 'react-native-sqlite-storage'
 import { DatabaseInitialization } from './DatabaseInitialization'
 import { Patient, Sex } from '../types/Patient'
 import { Order } from '../types/Order'
+import { Allergy } from '../types/Alergies'
 import { PrescriptionType } from '../types/PrescriptionType'
 import { DATABASE } from './Constants'
 import { DropboxDatabaseSync } from '../sync/dropbox/DropboxDatabaseSync'
 import { AppState, AppStateStatus } from 'react-native'
+import { EmptyObject } from 'redux'
 
 export interface Database {
   // Create
@@ -20,7 +22,8 @@ export interface Database {
     sex: string,
     address: string,
     guardianName: string
-  ): Promise<void>
+  ): Promise<number>
+  addAllergy(list: [string], patientId: number): Promise<void>
   addPrescription(
     prescription: string,
     totalAmount: number,
@@ -31,6 +34,7 @@ export interface Database {
   // Read
   getPatientById(p_id: number): Promise<Patient>
   getPrescriptionById(patient_id: number): Promise<PrescriptionType[]>
+  getAllergies(patient_id: number): Promise<Allergy[]>
   getPatientsList(limit: number, orderby: Order): Promise<Patient[]>
 }
 
@@ -45,7 +49,7 @@ async function addPatient(
   sex: string,
   address: string,
   guardianName: string
-): Promise<void> {
+): Promise<number> {
   return getDatabase()
     .then(db =>
       db.executeSql(
@@ -54,8 +58,10 @@ async function addPatient(
       )
     )
     .then(([results]) => {
+      let patientId: number
+      patientId = results.insertId
       // Queue database upload
-      return Promise.resolve() // databaseSync.upload();
+      return Promise.resolve(patientId) // databaseSync.upload();
     })
 }
 // Insert a new patient into the database
@@ -77,6 +83,39 @@ async function addPrescription(
       // Queue database upload
       return Promise.resolve()
     })
+}
+async function addAllergy(list: [string], patientId: number) {
+  if (patientId < 0 || patientId == undefined || !Array.isArray(list)) {
+    throw Error('PATIENT_NOT_FOUND')
+  }
+  if (!list.length) {
+    throw Error('EMPTY_ALLERGY')
+  }
+  let rows = []
+  let sizeOFRow = []
+  list.forEach((value, index) => {
+    rows.push(value)
+    rows.push(patientId)
+    sizeOFRow.push('(?,?)')
+  })
+  console.log('model addAllergy-invoked list', list, sizeOFRow, rows)
+  getDatabase().then(db =>
+    db.transaction(tx => {
+      tx.executeSql(
+        `INSERT INTO Allergies (name,patientId) VALUES ${sizeOFRow.join()}`,
+        rows,
+        (tx, results) => {
+          if (results.rowsAffected > 0) {
+            console.log('Insert success', results)
+            return Promise.resolve()
+          } else {
+            console.log('Insert failed')
+            return Promise.reject()
+          }
+        }
+      )
+    })
+  )
 }
 
 // Get an array of all the patinets in database
@@ -104,6 +143,30 @@ async function getPatientsList(limit: number, orderby: Order = Order.asc) {
     })
 }
 
+async function getAllergies(patient_id: number) {
+  if (patient_id < 0 || patient_id === undefined) {
+    throw Error('NO_PID_FOUND')
+  }
+  return getDatabase()
+    .then(db =>
+      // Get Allergies reported by patient
+      db.executeSql(`SELECT * FROM Allergies where patientId= ${patient_id}`)
+    )
+    .then(([results]) => {
+      if (results === undefined) {
+        return undefined
+      }
+
+      const count = results.rows.length
+      const lists: Allergy[] = []
+      for (let i = 0; i < count; i++) {
+        const row: Allergy = results.rows.item(i)
+        const record = Object.assign({}, row)
+        lists.push(record)
+      }
+      return lists
+    })
+}
 // Get patient by patient id
 async function getPatientById(p_id: number) {
   console.log('[db] Fetching patient by id')
@@ -216,5 +279,7 @@ export const sqliteDatabase: Database = {
   addPrescription,
   getPatientsList,
   getPatientById,
-  getPrescriptionById
+  getPrescriptionById,
+  addAllergy,
+  getAllergies
 }
