@@ -103,7 +103,9 @@ function SearchBar(props) {
       </View>
       <TouchableOpacity
         style={styles.searchIconContainer}
-        onPress={() => ToggleFilterVisible()}>
+        onPress={() => {
+          //ToggleFilterVisible()
+        }}>
         <Icon name="filter" size={30} color={theme.colors.white} />
       </TouchableOpacity>
     </View>

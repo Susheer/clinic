@@ -21,6 +21,13 @@ const App = () => {
             borderColor: 'black'
           }
         }
+      },
+      Button: {
+        baseStyle: {
+          borderStyle: 'solid',
+          borderWidth: 1,
+          borderRadius: 4
+        }
       }
     }
   })

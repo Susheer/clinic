@@ -6,8 +6,6 @@ import { VStack, Text, ScrollView } from 'native-base'
 import { useToast } from 'native-base'
 import * as theme from '../../constants/theme'
 import { styles } from './form.style'
-import { addNewPatientList } from '../../stores/actions/user.action'
-import { setrefPatientsList } from './redux/actions'
 import { CTextinput } from '../Textinput'
 import { useDatabase } from '../../context/DatabaseContext'
 

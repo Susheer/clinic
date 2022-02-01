@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import {
   View,
   StatusBar,
@@ -7,47 +7,58 @@ import {
   Image,
   Text,
   FlatList,
-  SafeAreaView
+  Dimensions
 } from 'react-native'
+import { HStack, VStack, Center, Box, Heading, Button } from 'native-base'
 import Icon from 'react-native-vector-icons/Ionicons'
 import FontIcon from 'react-native-vector-icons/Fontisto'
 import styles from './Profile.style'
 import { useDatabase } from '../../context/DatabaseContext'
-import Experience from '../../components/Experience'
+import AllergyComp from '../../components/AllergyComp'
 import * as theme from '../../constants/theme'
 import PrescriptionComp from '../../components/Prescription/card'
 
-const allergies = [
-  {
-    id: '1',
-    updatedAt: '10th,Jan 2018',
-    name: 'A red, itchy rash'
-  }
-]
-const Edu = [
-  {
-    id: '1',
-    institute: 'Khaled Ben Walid High School',
-    start: 'Jan 2018',
-    end: 'Feb 2018',
-    diploma: 'Computer Sciences'
-  },
-  {
-    id: '2',
-    institute: 'ISET Charguia',
-    start: 'Sep 2017',
-    end: 'Jun 2020',
-    diploma: 'Computer Technologies'
-  }
-]
 const Profile = ({ navigation }) => {
   const patientId = useSelector(state => state.userReducer.selectedPatientId)
+  const [allergies, setAllergies] = useState([])
   const state = useSelector(state => state.userReducer)
   const [prescriptionList, setPrescriptionList] = useState([])
   const [user, setUser] = useState(undefined)
   const dbCTX = useDatabase()
+
+  let maxHAllergies = 0
+  let maxHPrescription = 0
+  if (allergies.length && prescriptionList.length) {
+    maxHPrescription = '56'
+    maxHAllergies = '56'
+  } else {
+    if (allergies.length) {
+      maxHAllergies = '56'
+    } else {
+      maxHAllergies = '32'
+    }
+    if (prescriptionList.length) {
+      maxHPrescription = '56'
+    } else {
+      maxHPrescription = '32'
+    }
+  }
+
+  const EmptyListMessage = ({ message, children }) => {
+    return (
+      <VStack height={'48'}>
+        <Center mt={'7'}>
+          <Text style={{ textAlign: 'center', fontSize: 15 }}>
+            {message || 'Nothing to show'}
+          </Text>
+          <Center mt={'5'}>{children}</Center>
+        </Center>
+      </VStack>
+    )
+  }
+
   useEffect(() => {
-    if (patientId) {
+    if (patientId === 0 || patientId) {
       dbCTX
         .getPatientById(patientId)
         .then(user => {
@@ -60,150 +71,161 @@ const Profile = ({ navigation }) => {
       dbCTX.getPrescriptionById(patientId).then(res => {
         setPrescriptionList(res)
       })
+      dbCTX
+        .getAllergies(patientId)
+        .then(allergies => {
+          setAllergies(allergies)
+        })
+        .catch(reason => {
+          setUser([])
+        })
+      dbCTX.getPrescriptionById(patientId).then(res => {
+        setPrescriptionList(res)
+      })
     }
   }, [patientId])
+  //  style={{ borderColor: 'red', borderWidth: 1 }}
   return (
     <>
-      <StatusBar barStyle="dark-content" backgroundColor={'#f9f9f9'} />
-      <SafeAreaView style={styles.SafeAreaView1} />
-      <SafeAreaView style={styles.SafeAreaView2}>
-        <View style={{ flex: 1 }}>
-          {/* Header */}
-          <View style={styles.header}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Icon name="arrow-back" size={30} color={theme.colors.black} />
-            </TouchableOpacity>
-            <View>
-              <TouchableOpacity
-                style={styles.addPatientIconContainer}
+      <StatusBar barStyle="dark-content" backgroundColor="#f9f9f9" />
+      <Box height={3} width="full" />
+      <VStack height="full" width="full">
+        <HStack padding={3} space={'5/6'}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Icon name="arrow-back" size={30} color={theme.colors.black} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.addPatientIconContainer}
+            onPress={() => {
+              setImmediate(() => navigation.navigate('Prescription', {}))
+            }}>
+            <FontIcon
+              name="prescription"
+              size={25}
+              color={theme.colors.black}
+            />
+          </TouchableOpacity>
+        </HStack>
+        <Center>
+          <HStack ml={5} width={'sm'} space={4}>
+            <Center>
+              <Image
+                style={{ width: 90, height: 90, borderRadius: 45 }}
+                source={require('../../assets/images/user-avatar-male.png')}
+              />
+            </Center>
+
+            <VStack space={1} mt={2} width={'56'}>
+              <HStack>
+                <Heading fontSize={'xl'}>{user?.name}</Heading>
+                <VStack>
+                  <Text style={{ fontSize: 15 }}>({user?.guardianName})</Text>
+                </VStack>
+              </HStack>
+              <HStack space={1}>
+                <Center ml={1}>
+                  <FontIcon name="mobile-alt" size={15} />
+                </Center>
+                <Text>{user?.mobileNumber}</Text>
+              </HStack>
+              <HStack space={1}>
+                <Center>
+                  <Icon name="location" size={15} color={theme.colors.gray} />
+                </Center>
+                <Text>
+                  {user?.address > 50
+                    ? user?.address.substring(0, 50 - 3) + '...'
+                    : user?.address}
+                </Text>
+              </HStack>
+            </VStack>
+          </HStack>
+        </Center>
+        {/* Allergies */}
+
+        <Heading ml={4} size={'sm'} mt={5} mb={3}>
+          Allergies/Past history
+        </Heading>
+
+        <HStack maxH={maxHAllergies}>
+          <FlatList
+            data={allergies}
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={item => item.aId}
+            ListEmptyComponent={
+              <EmptyListMessage
+                message={`No past Histroy / allergies reported `}>
+                <Button
+                  colorScheme="trueGray"
+                  variant={'outline'}
+                  onPress={() => {
+                    setImmediate(() => navigation.navigate('Prescription', {}))
+                  }}>
+                  Click to Update if Any
+                </Button>
+              </EmptyListMessage>
+            }
+            renderItem={({ item }) => {
+              const { updateAt, name } = item
+              return <AllergyComp updatedAt={updateAt} name={name} />
+            }}
+          />
+        </HStack>
+
+        {/* Prescriptions */}
+        <Heading ml={4} fontSize={'md'} mt={7} mb={2}>
+          Prescriptions
+        </Heading>
+        <VStack maxH={maxHPrescription}>
+          {prescriptionList.length ? (
+            <FlatList
+              data={prescriptionList}
+              horizontal
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item }) => {
+                const {
+                  createdAt,
+                  paidAmount,
+                  patinetId,
+                  prescription,
+                  prs_id,
+                  remainBalance,
+                  totalAmount,
+                  updateAt
+                } = item
+                return (
+                  <View
+                    style={{
+                      width: Dimensions.get('screen').width - 20
+                    }}>
+                    <PrescriptionComp
+                      createdAt={createdAt}
+                      paidAmount={paidAmount}
+                      patinetId={patinetId}
+                      prescription={prescription}
+                      id={prs_id}
+                      remainBalance={remainBalance}
+                      totalAmount={totalAmount}
+                      updateAt={updateAt}
+                    />
+                  </View>
+                )
+              }}
+            />
+          ) : (
+            <EmptyListMessage message={`No Prescription found `}>
+              <Button
+                colorScheme="trueGray"
+                variant={'outline'}
                 onPress={() => {
                   setImmediate(() => navigation.navigate('Prescription', {}))
                 }}>
-                <FontIcon
-                  name="prescription"
-                  size={25}
-                  color={theme.colors.black}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Body */}
-
-          <View
-            style={[styles.body, { flexGrow: 1 }]}
-            nestedScrollEnabled={true}>
-            <View style={styles.titleContainer}>
-              <Image
-                style={{ width: 100, height: 100, borderRadius: 10 }}
-                source={require('../../images/Blaiti.jpg')}
-              />
-              <View style={styles.titleTextContainer}>
-                <Text style={styles.nameText}>{user?.name}</Text>
-                <Text style={styles.posText}>{user?.guardianName}</Text>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <FontIcon
-                    name="mobile-alt"
-                    size={20}
-                    color={theme.colors.gray}
-                  />
-                  <Text
-                    style={[
-                      styles.posText,
-                      { color: theme.colors.gray, marginLeft: 10 }
-                    ]}>
-                    {user?.mobileNumber}
-                  </Text>
-                </View>
-              </View>
-            </View>
-
-            {/* Description */}
-            <View
-              style={{
-                flex: 1,
-                flexDirection: 'row',
-                justifyContent: 'flex-start',
-                alignItems: 'flex-start',
-                paddingTop: 8
-              }}>
-              <View style={{ marginLeft: 19 }}>
-                <Icon name="location" size={20} color={theme.colors.gray} />
-              </View>
-
-              <View style={{ flexDirection: 'row', marginRight: 28 }}>
-                <Text
-                  style={[
-                    styles.normalText,
-                    {
-                      paddingTop: 0,
-                      fontSize: 14,
-                      textTransform: 'capitalize',
-                      flex: 1,
-                      paddingRight: 12,
-                      flexWrap: 'wrap'
-                    }
-                  ]}>
-                  {user?.address}
-                </Text>
-              </View>
-            </View>
-            {/* Allergies */}
-            <Text style={styles.titleText}>Allergies</Text>
-            <SafeAreaView style={{ flex: 1 }}>
-              <FlatList
-                data={allergies}
-                showsHorizontalScrollIndicator={false}
-                keyExtractor={item => item.id}
-                renderItem={({ item }) => {
-                  return <Experience item={item} />
-                }}
-              />
-            </SafeAreaView>
-
-            {/* Popular Companies */}
-            <View style={styles.popularContainer}>
-              <Text style={[styles.popularText, { marginLeft: 20 }]}>
-                Prescriptions
-              </Text>
-              <FlatList
-                data={prescriptionList}
-                horizontal
-                keyExtractor={item => item.prs_id}
-                renderItem={({ item }) => {
-                  if (!item) {
-                    return <Text>No Item</Text>
-                  }
-                  const {
-                    createdAt,
-                    paidAmount,
-                    patinetId,
-                    prescription,
-                    prs_id,
-                    remainBalance,
-                    totalAmount,
-                    updateAt
-                  } = item
-                  return (
-                    <TouchableOpacity activeOpacity={1} style={{ flex: 1 }}>
-                      <PrescriptionComp
-                        createdAt={createdAt}
-                        paidAmount={paidAmount}
-                        patinetId={patinetId}
-                        prescription={prescription}
-                        id={prs_id}
-                        remainBalance={remainBalance}
-                        totalAmount={totalAmount}
-                        updateAt={updateAt}
-                      />
-                    </TouchableOpacity>
-                  )
-                }}
-              />
-            </View>
-          </View>
-        </View>
-      </SafeAreaView>
+                Add New Prescription
+              </Button>
+            </EmptyListMessage>
+          )}
+        </VStack>
+      </VStack>
     </>
   )
 }

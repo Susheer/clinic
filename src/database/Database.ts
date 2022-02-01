@@ -6,6 +6,7 @@ import SQLite from 'react-native-sqlite-storage'
 import { DatabaseInitialization } from './DatabaseInitialization'
 import { Patient, Sex } from '../types/Patient'
 import { Order } from '../types/Order'
+import { Allergy } from '../types/Alergies'
 import { PrescriptionType } from '../types/PrescriptionType'
 import { DATABASE } from './Constants'
 import { DropboxDatabaseSync } from '../sync/dropbox/DropboxDatabaseSync'
@@ -33,6 +34,7 @@ export interface Database {
   // Read
   getPatientById(p_id: number): Promise<Patient>
   getPrescriptionById(patient_id: number): Promise<PrescriptionType[]>
+  getAllergies(patient_id: number): Promise<Allergy[]>
   getPatientsList(limit: number, orderby: Order): Promise<Patient[]>
 }
 
@@ -141,6 +143,30 @@ async function getPatientsList(limit: number, orderby: Order = Order.asc) {
     })
 }
 
+async function getAllergies(patient_id: number) {
+  if (patient_id < 0 || patient_id === undefined) {
+    throw Error('NO_PID_FOUND')
+  }
+  return getDatabase()
+    .then(db =>
+      // Get Allergies reported by patient
+      db.executeSql(`SELECT * FROM Allergies where patientId= ${patient_id}`)
+    )
+    .then(([results]) => {
+      if (results === undefined) {
+        return undefined
+      }
+
+      const count = results.rows.length
+      const lists: Allergy[] = []
+      for (let i = 0; i < count; i++) {
+        const row: Allergy = results.rows.item(i)
+        const record = Object.assign({}, row)
+        lists.push(record)
+      }
+      return lists
+    })
+}
 // Get patient by patient id
 async function getPatientById(p_id: number) {
   console.log('[db] Fetching patient by id')
@@ -254,5 +280,6 @@ export const sqliteDatabase: Database = {
   getPatientsList,
   getPatientById,
   getPrescriptionById,
-  addAllergy
+  addAllergy,
+  getAllergies
 }
