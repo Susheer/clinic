@@ -53,16 +53,18 @@ const Home = ({ navigation, user }) => {
 
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <SearchBar term={searchTerm} setTerm={setSearchTerm} />
       <View style={[styles.popularContainer, { marginLeft: 20 }]}>
         <Text style={styles.popularText}>Quick result</Text>
       </View>
+
       <UserList
         searchTerm={searchTerm}
         onPressView={onPressView}
         users={users}
       />
+
       <Modal
         animationType="slide"
         visible={filterVisible}
@@ -74,6 +76,7 @@ const Home = ({ navigation, user }) => {
         visible={addNewPatientFlg}
         onRequestClose={() => setAddNewPatientFlg(!addNewPatientFlg)}>
         <AddPatientForm
+          isForm={true}
           onCloseForm={() => setAddNewPatientFlg(!addNewPatientFlg)}
         />
       </Modal>
@@ -122,7 +125,7 @@ function UserList(props) {
     data = users
   }
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, marginHorizontal: 12 }}>
       <FlatList
         data={data}
         renderItem={({ item, index }) => {

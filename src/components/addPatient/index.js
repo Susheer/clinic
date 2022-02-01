@@ -26,7 +26,7 @@ const AddPatient = props => {
   const [address, setAddress] = useState('')
   const [allergies, setAllergies] = useState([])
   const [error_description, setErrorDescription] = useState('')
-  const { onCloseForm } = props
+  const { onCloseForm, isForm, navigation } = props
   const clearForm = () => {
     setSex('Sex')
     setName('')
@@ -42,6 +42,13 @@ const AddPatient = props => {
   const delAllergie = index => {
     const temp = allergies.filter((_, itemI) => itemI !== index)
     setAllergies(temp)
+  }
+  const handleOnClose = () => {
+    if (isForm) {
+      onCloseForm()
+    } else {
+      navigation.goBack()
+    }
   }
 
   let body = (
@@ -107,7 +114,10 @@ const AddPatient = props => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={onCloseForm}>
+        <TouchableOpacity
+          onPress={() => {
+            handleOnClose()
+          }}>
           <Icon
             name="keyboard-arrow-left"
             size={30}
@@ -170,7 +180,7 @@ const AddPatient = props => {
                             title: `Patient ${name} added !! `
                           })
                           clearForm()
-                          onCloseForm()
+                          handleOnClose()
                         })
                       })
                       .catch(reason => {
@@ -183,7 +193,7 @@ const AddPatient = props => {
                         title: `Patient ${name} added !! `
                       })
                       clearForm()
-                      onCloseForm()
+                      handleOnClose()
                     })
                   }
                 })
