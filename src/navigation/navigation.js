@@ -2,15 +2,17 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Home from '../screens/Home/Home.screen'
 import Profile from '../screens/Profile/Profile.screen'
+import Setting from '../screens/Setting/Setting.screen'
 
 import Prescription from '../screens/Prescription/Prescription.screen'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
-import { fetchUserSuccess } from '../stores/actions/user.action'
+import AddPatientForm from '../components/addPatient'
 import { sqliteDatabase } from '../database/Database'
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import Icon from 'react-native-vector-icons/Ionicons'
+import Icon from 'react-native-vector-icons/MaterialIcons'
+import { Text } from 'react-native'
 
 const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -24,17 +26,27 @@ function MyTabs() {
         options={{
           headerShown: false,
           tabBarIcon: ({ focused, color, size }) => {
-            return <Icon name={'ios-home'} size={25} color={color} />
+            return <Icon name={'home'} size={25} color={color} />
           }
         }}
       />
       <Tab.Screen
-        name="Profile"
-        component={Profile}
+        name="Add Patient"
+        component={AddPatientForm}
         options={{
           headerShown: false,
           tabBarIcon: ({ focused, color, size }) => {
-            return <Icon name={'ios-settings'} size={25} color={color} />
+            return <Icon name={'person-add'} size={25} color={color} />
+          }
+        }}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={Setting}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ focused, color, size }) => {
+            return <Icon name={'settings'} size={25} color={color} />
           }
         }}
       />
@@ -61,9 +73,9 @@ const MainNavigation = props => {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen
-          name="Home"
+          name="HomeMain"
           options={{ headerShown: false }}
-          component={Home}
+          component={MyTabs}
         />
         <Stack.Screen
           name="Profile"
